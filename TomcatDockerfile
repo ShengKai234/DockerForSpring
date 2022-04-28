@@ -1,0 +1,20 @@
+FROM tomcat:8.5.50-jdk8-adoptopenjdk-hotspot
+MAINTAINER systex
+ARG WAR_FILE
+## update timezone
+ENV TZ UTC
+RUN apt update && apt install -y tzdata && \
+        ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+        echo $TZ > /etc/timezone
+
+# python
+RUN apt-get install -y software-properties-common && \
+        add-apt-repository ppa:deadsnakes/ppa && \
+	apt update && apt upgrade -y && \
+	apt install -y python3.9 && \
+	apt install -y python3.9-distutils && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.9 get-pip.py --user && \
+	python3.9 -m pip install rsa
+
+RUN apt update && apt install -y p7zip-full
+
+# docker build -f TomcatDockerfile -t tomcat.py.img:1.0.0 .
